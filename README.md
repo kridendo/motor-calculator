@@ -1,0 +1,304 @@
+[index.html](https://github.com/user-attachments/files/25089492/index.html)
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<title>Калькулятор потужності двигуна ланцюгового конвеєра</title>
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background:#f2f4f7;
+  margin:0;
+}
+
+.container {
+  max-width: 1000px;
+  margin: 30px auto;
+  background:#ffffff;
+  padding:30px;
+  border-radius:10px;
+  box-shadow:0 4px 10px rgba(0,0,0,0.1);
+}
+
+h1 {
+  text-align:center;
+  margin-bottom:5px;
+}
+
+.subtitle {
+  text-align:center;
+  color:#555;
+  margin-bottom:30px;
+}
+
+.section {
+  margin-top:30px;
+}
+
+.section h2 {
+  border-left:5px solid #2563eb;
+  padding-left:10px;
+  color:#1f2937;
+}
+
+.grid {
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap:15px;
+  margin-top:15px;
+}
+
+label {
+  font-weight:bold;
+  font-size:14px;
+}
+
+input {
+  width:100%;
+  padding:8px;
+  font-size:14px;
+  margin-top:4px;
+}
+
+button {
+  margin-top:25px;
+  padding:14px;
+  font-size:17px;
+  width:100%;
+  background:#2563eb;
+  color:white;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+}
+
+button:hover {
+  background:#1d4ed8;
+}
+
+.button-green {
+  background:#16a34a;
+}
+
+.button-green:hover {
+  background:#15803d;
+}
+
+.result {
+  background:#eef4ff;
+  padding:20px;
+  margin-top:25px;
+  border-radius:8px;
+  font-size:16px;
+}
+
+.explain {
+  background:#f9fafb;
+  padding:20px;
+  border-radius:8px;
+  font-size:14px;
+  line-height:1.6;
+}
+
+.footer {
+  text-align:center;
+  color:#777;
+  font-size:13px;
+  margin-top:30px;
+}
+</style>
+</head>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 0 20px;
+    background: #f5f5f5;
+}
+</style>
+
+<body>
+<h1>Розрахунок потужності електродвигуна для конвеєра</h1>
+
+<p>
+Онлайн-калькулятор для попереднього інженерного розрахунку
+потужності електродвигуна ланцюгових та скребкових конвеєрів.
+</p>
+
+<div class="container">
+
+<h1>Калькулятор потужності двигуна</h1>
+<div class="subtitle">
+Ланцюговий / скребковий конвеєр • Онлайн інженерний розрахунок
+</div>
+
+<!-- ВХІДНІ ДАНІ -->
+<div class="section">
+<h2>Вхідні параметри</h2>
+
+<div class="grid">
+<div>
+<label>Продуктивність Q, т/год</label>
+<input id="Q" value="20">
+</div>
+
+<div>
+<label>Густина вантажу ρ, т/м³</label>
+<input id="rho" value="0.75">
+</div>
+
+<div>
+<label>Швидкість руху v, м/с</label>
+<input id="v" value="0.7">
+</div>
+
+<div>
+<label>Діаметр зірочки D, мм</label>
+<input id="D" value="146.82">
+</div>
+
+<div>
+<label>Довжина конвеєра L, м</label>
+<input id="L" value="12">
+</div>
+
+<div>
+<label>Висота підйому H, м</label>
+<input id="H" value="8.5">
+</div>
+
+<div>
+<label>Маса ланцюга μ, кг/м</label>
+<input id="mu" value="4">
+</div>
+
+<div>
+<label>Коефіцієнт тертя f</label>
+<input id="f" value="0.8">
+</div>
+
+<div>
+<label>ККД приводу η</label>
+<input id="eta" value="0.965">
+</div>
+
+<div>
+<label>Коефіцієнт запасу потужності</label>
+<input id="kzap" value="1.5">
+</div>
+</div>
+
+<button onclick="calc()">Розрахувати</button>
+</div>
+
+<!-- РЕЗУЛЬТАТ -->
+<div class="result" id="out"></div>
+
+<!-- КНОПКА ЛІДА -->
+<div class="section">
+<button class="button-green" onclick="openForm()">
+Замовити підбір двигуна
+</button>
+</div>
+
+<!-- ФОРМА -->
+<div class="section" id="leadForm" style="display:none;">
+<h2>Заявка на підбір двигуна</h2>
+
+<div class="explain">
+<label>Ваше ім’я</label>
+<input id="name" placeholder="Імʼя">
+
+<br><br>
+
+<label>Email або телефон</label>
+<input id="contact" placeholder="email або +380...">
+
+<br><br>
+
+<label>Коментар (необовʼязково)</label>
+<input id="comment" placeholder="Тип вантажу, режим роботи, зауваження">
+
+<br><br>
+
+<button onclick="sendLead()">Надіслати заявку</button>
+</div>
+</div>
+
+<!-- ПОЯСНЕННЯ -->
+<div class="section">
+<h2>Як виконується розрахунок</h2>
+<div class="explain">
+1. За заданою продуктивністю та швидкістю визначається погонна маса вантажу.<br><br>
+2. Розраховується сумарний опір руху з урахуванням тертя та підйому вантажу.<br><br>
+3. За опором визначається тягове зусилля та момент на зірочці.<br><br>
+4. Потужність двигуна визначається з урахуванням ККД приводу та коефіцієнта запасу.<br><br>
+<b>Методика відповідає інженерним розрахункам для ланцюгових і скребкових конвеєрів.</b>
+</div>
+</div>
+
+<div class="footer">
+© Інженерний онлайн-калькулятор
+</div>
+
+</div>
+
+<script>
+function calc(){
+  let Q = Number(document.getElementById("Q").value);
+  let v = Number(document.getElementById("v").value);
+  let D = Number(document.getElementById("D").value)/1000;
+  let L = Number(document.getElementById("L").value);
+  let H = Number(document.getElementById("H").value);
+  let mu = Number(document.getElementById("mu").value);
+  let f = Number(document.getElementById("f").value);
+  let eta = Number(document.getElementById("eta").value);
+  let kzap = Number(document.getElementById("kzap").value);
+
+  let R = D / 2;
+  let n = (v * 60) / (Math.PI * D);
+  let q = (Q*1000/3600) / v;
+  let Wrp = (mu + q) * f * L + (q + mu) * H;
+  let F = Wrp * 9.81;
+  let M = F * R;
+  let P = (M * 2 * Math.PI * n / 60) / eta;
+  let Pmotor = P * kzap / 1000;
+
+  document.getElementById("out").innerHTML = `
+  <b>Результати розрахунку:</b><br><br>
+  Оберти зірочки: <b>${n.toFixed(1)} об/хв</b><br>
+  Тягове зусилля: <b>${F.toFixed(0)} Н</b><br>
+  Момент на валу: <b>${M.toFixed(1)} Н·м</b><br><br>
+  <span style="font-size:18px">
+  Потужність двигуна: <b>${Pmotor.toFixed(2)} кВт</b>
+  </span>
+  `;
+}
+
+function openForm(){
+  document.getElementById("leadForm").style.display = "block";
+  document.getElementById("leadForm").scrollIntoView({behavior:"smooth"});
+}
+
+function sendLead(){
+  let name = document.getElementById("name").value;
+  let contact = document.getElementById("contact").value;
+  let comment = document.getElementById("comment").value;
+
+  let subject = "Заявка на підбір двигуна";
+  let body =
+    "Імʼя: " + name + "%0D%0A" +
+    "Контакт: " + contact + "%0D%0A" +
+    "Коментар: " + comment + "%0D%0A%0D%0A" +
+    "Результат розрахунку:%0D%0A" +
+    document.getElementById("out").innerText;
+
+  window.location.href =
+    "mailto: kridendo@gmail.com?subject=" + subject + "&body=" + body;
+}
+</script>
+
+</body>
+</html>
