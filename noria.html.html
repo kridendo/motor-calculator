@@ -9,7 +9,6 @@ body {
   font-family: Arial, sans-serif;
   background: #f2f4f7;
   margin: 0;
-  padding: 0;
 }
 
 .container {
@@ -18,63 +17,45 @@ body {
   padding: 20px;
 }
 
-h1 {
-  text-align: center;
-  margin-bottom: 30px;
-}
-
 .card {
-  background: #ffffff;
+  background: #fff;
   padding: 20px;
-  margin-bottom: 25px;
+  margin-bottom: 20px;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
 
-.card h2 {
-  margin-top: 0;
-  border-bottom: 1px solid #ddd;
-  padding-bottom: 10px;
+h1 {
+  text-align: center;
 }
 
-.grid {
+.row {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-template-columns: 1fr 1fr;
   gap: 12px;
 }
 
 label {
   display: flex;
   justify-content: space-between;
-  align-items: center;
 }
 
 input {
   width: 100px;
-  padding: 5px;
 }
 
 button {
+  margin-top: 15px;
   background: #0d6efd;
-  color: white;
+  color: #fff;
   padding: 12px 25px;
   border: none;
   border-radius: 6px;
   cursor: pointer;
-  font-size: 16px;
-}
-
-button:hover {
-  background: #084298;
 }
 
 .result p {
   margin: 6px 0;
-}
-
-.note {
-  font-size: 14px;
-  color: #555;
 }
 </style>
 </head>
@@ -82,35 +63,27 @@ button:hover {
 <body>
 
 <div class="container">
-
 <h1>Розрахунок норії</h1>
 
 <div class="card">
 <h2>Вхідні дані</h2>
 
-<div class="grid">
+<div class="row">
 <label>B, мм <input id="B" value="300"></label>
 <label>ρ, т/м³ <input id="rho" value="0.7"></label>
 <label>H, м <input id="H" value="30"></label>
-<label>Обʼєм ковша, л <input id="V" value="3.2"></label>
-<label>Крок ковшів, мм <input id="t" value="200"></label>
+<label>Q, т/год <input id="Q" value="100"></label>
+<label>Крок ковшів t, мм <input id="t" value="200"></label>
 <label>Швидкість v, м/с <input id="v" value="2.5"></label>
-<label>Діаметр барабана D, м <input id="D" value="0.65"></label>
+<label>D барабана, м <input id="D" value="0.65"></label>
+<label>Обʼєм ковша V, л <input id="V" value="3.2"></label>
 </div>
 
-<br>
 <button onclick="calc()">Розрахувати</button>
 </div>
 
 <div class="card result" id="out">
-<p>Введіть дані та натисніть «Розрахувати»</p>
-</div>
-
-<div class="card note">
-<h2>Пояснення</h2>
-<p>Розрахунок виконано за класичною методикою для стрічкових норій. 
-Продуктивність визначається за обʼємом ковша, кроком їх розміщення та швидкістю руху.
-Момент і потужність розраховані з урахуванням ККД та коефіцієнта запасу.</p>
+<p>Очікую розрахунок…</p>
 </div>
 
 </div>
@@ -120,35 +93,39 @@ function calc() {
 
   const rho = +document.getElementById("rho").value;
   const H   = +document.getElementById("H").value;
-  const V  = +document.getElementById("V").value / 1000;
-  const t  = +document.getElementById("t").value / 1000;
-  const v  = +document.getElementById("v").value;
-  const D  = +document.getElementById("D").value;
+  const Q   = +document.getElementById("Q").value;
+  const t   = +document.getElementById("t").value / 1000;
+  const v   = +document.getElementById("v").value;
+  const D   = +document.getElementById("D").value;
+  const V   = +document.getElementById("V").value / 1000;
 
   const g = 9.81;
 
+  // ===== Mathcad =====
   const Qfact = V * rho / t * v * 3600;
   const n6 = v / (Math.PI * D) * 60;
 
-  const q = (Qfact * 1000) / (3600 * v);
-  const qBucket = 1 / t;
-  const qx = q + qBucket;
+  const q = Qfact / v;         // кг/м
+  const qk = 1 / t;            // кг/м
+  const qx = q + qk;
 
   const Wrab = (q + qx) * H;
   const W0 = Wrab;
 
   const M = D / 2 * W0 * g;
+
   const eta = 0.94;
   const kzap = 1.05;
+
   const N = kzap * W0 * g * v / (1000 * eta);
 
   document.getElementById("out").innerHTML = `
   <h2>Результати</h2>
-  <p>Фактична продуктивність: <b>${Qfact.toFixed(2)} т/год</b></p>
-  <p>Оберти барабана: <b>${n6.toFixed(1)} об/хв</b></p>
-  <p>Погонне навантаження: <b>${q.toFixed(2)} кг/м</b></p>
-  <p>Момент на барабані: <b>${M.toFixed(1)} Н·м</b></p>
-  <p>Потужність двигуна: <b>${N.toFixed(2)} кВт</b></p>
+  <p>Фактична продуктивність Qфакт = <b>${Qfact.toFixed(1)} т/год</b></p>
+  <p>Оберти барабана n = <b>${n6.toFixed(1)} об/хв</b></p>
+  <p>Погонне навантаження q = <b>${q.toFixed(1)} кг/м</b></p>
+  <p>Момент на барабані M = <b>${M.toFixed(0)} Н·м</b></p>
+  <p>Потужність двигуна N = <b>${N.toFixed(2)} кВт</b></p>
   `;
 }
 </script>
