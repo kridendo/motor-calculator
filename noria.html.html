@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Розрахунок потужності двигуна норії</title>
+
+    <meta name="description" content="Онлайн розрахунок потужності електродвигуна для норії (ковшового елеватора).">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 20px;
+            background: #f5f5f5;
+            color: #222;
+        }
+
+        h1, h2 {
+            color: #003366;
+        }
+
+        .calc-block {
+            background: #ffffff;
+            padding: 25px;
+            margin: 30px 0;
+            border-radius: 6px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        label {
+            display: block;
+            margin-top: 12px;
+            font-weight: bold;
+        }
+
+        input {
+            padding: 8px;
+            width: 100%;
+            max-width: 300px;
+            margin-top: 5px;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 12px 25px;
+            background: #003366;
+            color: #fff;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        button:hover {
+            background: #0055aa;
+        }
+
+        .result {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        a {
+            color: #003366;
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+
+<a href="index.html">← Назад до калькулятора конвеєра</a>
+
+<h1>Розрахунок потужності двигуна норії</h1>
+
+<p>
+Онлайн-калькулятор для попереднього інженерного розрахунку
+потужності електродвигуна ковшового елеватора (норії).
+</p>
+
+<div class="calc-block">
+
+    <h2>Вхідні дані</h2>
+
+    <label>Продуктивність, т/год</label>
+    <input type="number" id="q">
+
+    <label>Висота підйому, м</label>
+    <input type="number" id="h">
+
+    <label>Швидкість стрічки, м/с</label>
+    <input type="number" id="v">
+
+    <label>ККД приводу (0.8–0.95)</label>
+    <input type="number" id="eta" step="0.01" value="0.9">
+
+    <button onclick="calculateNoria()">Розрахувати</button>
+
+    <div class="result" id="result"></div>
+
+</div>
+
+<h2>Пояснення розрахунку</h2>
+<ul>
+    <li>Розрахунок базується на підйомі матеріалу на задану висоту</li>
+    <li>Враховується продуктивність та ККД приводу</li>
+    <li>Отримана потужність є мінімально необхідною</li>
+</ul>
+
+<script>
+function calculateNoria() {
+
+    var q = parseFloat(document.getElementById("q").value);
+    var h = parseFloat(document.getElementById("h").value);
+    var eta = parseFloat(document.getElementById("eta").value);
+
+    if (isNaN(q) || isNaN(h) || isNaN(eta)) {
+        document.getElementById("result").innerText =
+            "Заповніть усі поля";
+        return;
+    }
+
+    // Спрощений інженерний розрахунок
+    // P = (Q * g * H) / (3.6 * 1000 * η)
+
+    var g = 9.81;
+    var power = (q * g * h) / (3.6 * 1000 * eta);
+
+    document.getElementById("result").innerText =
+        "Рекомендована потужність двигуна: " +
+        power.toFixed(2) + " кВт";
+}
+</script>
+
+</body>
+</html>
