@@ -91,41 +91,53 @@ button {
 <script>
 function calc() {
 
-  const rho = +document.getElementById("rho").value;
-  const H   = +document.getElementById("H").value;
-  const Q   = +document.getElementById("Q").value;
-  const t   = +document.getElementById("t").value / 1000;
-  const v   = +document.getElementById("v").value;
-  const D   = +document.getElementById("D").value;
-  const V   = +document.getElementById("V").value / 1000;
+  // ===== ВХІД =====
+  const rho = +document.getElementById("rho").value;      // т/м3
+  const H   = +document.getElementById("H").value;        // м
+  const V   = +document.getElementById("V").value / 1000; // м3
+  const t   = +document.getElementById("t").value / 1000; // м
+  const v   = +document.getElementById("v").value;        // м/с
+  const D6  = +document.getElementById("D").value;        // м
 
   const g = 9.81;
 
-  // ===== Mathcad =====
-  const Qfact = V * rho / t * v * 3600;
-  const n6 = v / (Math.PI * D) * 60;
+  // ===== ПРОДУКТИВНІСТЬ (Mathcad) =====
+  const Qfact = (V * rho / t) * v;     // т/с
+  const Q_tph = Qfact * 3600;          // т/год (для виводу)
 
-  const q = Qfact / v;         // кг/м
-  const qk = 1 / t;            // кг/м
-  const qx = q + qk;
+  // ===== ОБЕРТИ =====
+  const n6 = v / (Math.PI * D6) * 60;  // об/хв
 
-  const Wrab = (q + qx) * H;
-  const W0 = Wrab;
+  // ===== ПОГОННІ НАВАНТАЖЕННЯ =====
+  const q = Qfact / v * 1000;          // кг/м (як у Mathcad)
 
-  const M = D / 2 * W0 * g;
+  const mBucket = 1;                   // кг (з Mathcad)
+  const qBucket = mBucket / t;         // кг/м
 
+  const qx = q + qBucket;
+
+  // ===== ОПОРИ =====
+  const Wrab = (q + qx) * H;            // кг
+  const W0 = Wrab;                      // кг
+
+  // ===== МОМЕНТ =====
+  const M = (D6 / 2) * W0 * g;          // Н·м
+
+  // ===== ПОТУЖНІСТЬ =====
   const eta = 0.94;
   const kzap = 1.05;
 
-  const N = kzap * W0 * g * v / (1000 * eta);
+  const N = kzap * W0 * g * v / (1000 * eta); // кВт
 
+  // ===== ВИВІД =====
   document.getElementById("out").innerHTML = `
-  <h2>Результати</h2>
-  <p>Фактична продуктивність Qфакт = <b>${Qfact.toFixed(1)} т/год</b></p>
-  <p>Оберти барабана n = <b>${n6.toFixed(1)} об/хв</b></p>
-  <p>Погонне навантаження q = <b>${q.toFixed(1)} кг/м</b></p>
-  <p>Момент на барабані M = <b>${M.toFixed(0)} Н·м</b></p>
-  <p>Потужність двигуна N = <b>${N.toFixed(2)} кВт</b></p>
+    <h2>Результати</h2>
+    <p>Qфакт = <b>${Q_tph.toFixed(1)} т/год</b></p>
+    <p>n барабана = <b>${n6.toFixed(2)} об/хв</b></p>
+    <p>q = <b>${q.toFixed(2)} кг/м</b></p>
+    <p>W₀ = <b>${W0.toFixed(1)} кг</b></p>
+    <p>M = <b>${M.toFixed(0)} Н·м</b></p>
+    <p>N = <b>${N.toFixed(2)} кВт</b></p>
   `;
 }
 </script>
